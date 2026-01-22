@@ -1,7 +1,7 @@
-public class Philsopher{
+public class Philosopher{
     private int id;
 
-    public Philsopher(int id){
+    public Philosopher(int id){
         this.id = id;
     }
 
