@@ -1,8 +1,13 @@
-public class Philosopher{
+public class Philosopher extends Thread{
     private int id;
 
     public Philosopher(int id){
         this.id = id;
+    }
+
+    @Override
+    public void run(){
+        System.out.println("Philosopher " + id + " is alive.");
     }
 
     public void think(){
@@ -11,6 +16,13 @@ public class Philosopher{
 
     public void eat(){
         System.out.println("Philosopher " + id + " is eating.");
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            System.out.println("Philosopher " + id + " was interrupted while eating.");
+            Thread.currentThread().interrupt();
+        }
+        think();
     }
 
     public void pickupLeftFork(Fork fork){
