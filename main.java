@@ -9,8 +9,9 @@ public class Main {
 
         Philosopher[] philosophers = new Philosopher[5];
         for (int i = 0; i < 5; i ++){
-            philosophers[i] = new Philosopher(i);
+            philosophers[i] = new Philosopher(i, forks);
             philosophers[i].start();
         }
+        System.out.println("Created 5 philosophers and forks.");
     }
 }

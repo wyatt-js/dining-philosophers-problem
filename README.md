@@ -7,8 +7,8 @@
 
 * What does your algorithm do to help prevent deadlocks and starvation? Are deadlocks and/or starvations still possible (and just improbable)?
 
-### Requirement Definitions
+### Requirement Definitions:
 
-* Philosophers will starve after 20 seconds and must eat for 3 seconds at a time.
+* Philosophers will starve after 16 seconds and must eat for 3 seconds at a time.
 
 <img width="824" height="615" alt="Screenshot 2026-01-22 at 14 44 35" src="https://github.com/user-attachments/assets/d81f9499-dc03-4e46-ad2e-424f66d4983e" />

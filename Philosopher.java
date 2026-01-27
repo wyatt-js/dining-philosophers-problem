@@ -1,39 +1,50 @@
 public class Philosopher extends Thread{
     private final int id;
-    private final Table table;
+    private final Fork[] forks;
 
-    public Philosopher(int id, Table table){
+    public Philosopher(int id, Fork[] forks){
         this.id = id;
-        this.table = table;
+        this.forks = forks;
     }
 
     @Override
     public void run(){
-        System.out.println("Philosopher " + id + " is alive.");
+        System.out.println("Philosopher " + id + " is thinking.");
+        while (true) {
+            if(!think()){
+                System.out.println("Philosopher " + id + " STARVED!");
+                break;
+            }
+        }
     }
 
-    public void think(){
-        System.out.println("Philosopher " + id + " is thinking.");
-        int i = 0;
-        // Try to eat 10 times before starving (20 seconds before starving)
-        while (i < 10) {
+    public boolean think(){
+        // 16 seconds before starving & try to eat every 2 seconds
+        for (int i = 0; i < 8; i++){
             try {
                 Thread.sleep(2000);
-                tryEat();
+                if (tryEat()) return true;
             } catch (InterruptedException e) {
-                System.out.println("Philosopher " + id + " was interrupted while thinking.");
                 Thread.currentThread().interrupt();
             }
-            i++;
         }
-        System.out.println("Philosopher " + id + " STARVED!");
+        return false;
     }
 
-    public void tryEat(){
-        if (table.requestToEat(id)){
-            System.out.println("Philosopher " + id + " got permission to eat.");
-            eat();
+    public boolean tryEat(){
+        if (forks[(id + 1) % 5].tryLock()){
+            if (forks[id].tryLock()){
+                try{
+                    eat();
+                    return true;
+                } finally {
+                    putDownForks();
+                }
+            } else {
+                forks[(id + 1) % 5].unlock();
+            }
         }
+        return false;
     }
 
     public void eat(){
@@ -41,9 +52,13 @@ public class Philosopher extends Thread{
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
-            System.out.println("Philosopher " + id + " was interrupted while eating.");
             Thread.currentThread().interrupt();
         }
-        think();
+    }
+
+    public void putDownForks(){
+        System.out.println("Philosopher " + id + " is done eating and now thinking.");
+        forks[(id + 1) % 5].unlock();
+        forks[id].unlock();
     }
 }
