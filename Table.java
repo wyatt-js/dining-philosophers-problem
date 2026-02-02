@@ -55,16 +55,67 @@ public class Table {
     private void pickUpForks(int philospherIndex){
         int left = this.leftForkIndex(philospherIndex);
         int right = this.rightForkIndex(philospherIndex);
-        this.forks[left].pickUp();
-        this.forks[right].pickUp();
+        if(left < right){
+            this.forks[left].pickUp();
+            this.forks[right].pickUp();
+        } else{
+            this.forks[right].pickUp();
+            this.forks[left].pickUp();
+        }
+        
     }
 
     private void putDownForks(int philospherIndex){
         int left = this.leftForkIndex(philospherIndex);
         int right = this.rightForkIndex(philospherIndex);
-        this.forks[left].putDown();
-        this.forks[right].putDown();
+        if(left < right){
+            this.forks[left].putDown();
+            this.forks[right].putDown();
+        } else{
+            this.forks[right].putDown();
+            this.forks[left].putDown();
+        }
     }
 
-    
+    private void addQueue(int philospherIndex){
+        if(!this.line.contains(philospherIndex)){
+            this.line.add(philospherIndex);
+        }
+    }
+
+    //Main functions for which we created table class in the begining. Philosophers will use them to obtain and release forks. 
+    public void obtainForks(int philosopherIndex) throws InterruptedException {
+        int left = leftForkIndex(philosopherIndex);
+        int right = rightForkIndex(philosopherIndex);
+        waiterLock.lock();
+        try {
+            addQueue(philosopherIndex);
+
+            while (!isHeadOfLine(philosopherIndex) || !forksFree(philosopherIndex)) {
+                changed.await();
+            }
+            forksAvailable[left] = false;
+            forksAvailable[right] = false;
+        } finally {
+            waiterLock.unlock();
+        }
+        this.pickUpForks(philosopherIndex);
+    }
+
+    public void freeForks(int philosopherIndex) throws InterruptedException{
+        this.putDownForks(philosopherIndex);
+        int left = leftForkIndex(philosopherIndex);
+        int right = rightForkIndex(philosopherIndex);
+        this.waiterLock.lock();
+        try {
+            forksAvailable[left] = true;
+            forksAvailable[right] = true;
+            this.line.poll();
+            this.changed.signalAll();
+        } finally {
+            this.waiterLock.unlock();
+        }
+
+    }
+
 }

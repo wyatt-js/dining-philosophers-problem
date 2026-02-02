@@ -1,17 +1,12 @@
-public class Main {
+public class main {
     public static void main(String[] args) {
-        System.out.println("Dining Philosophers Problem Simulation");
+        int n = 5;
+        Table table = new Table(n);
 
-        Fork[] forks = new Fork[5];
-        for (int i = 0; i < 5; i ++){
-            forks[i] = new Fork(i);
+        Philosopher[] ps = new Philosopher[n];
+        for (int i = 0; i < n; i++) {
+            ps[i] = new Philosopher(i, table);
+            ps[i].start();
         }
-
-        Philosopher[] philosophers = new Philosopher[5];
-        for (int i = 0; i < 5; i ++){
-            philosophers[i] = new Philosopher(i, forks);
-            philosophers[i].start();
-        }
-        System.out.println("Created 5 philosophers and forks.");
     }
 }
