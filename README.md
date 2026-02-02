@@ -7,10 +7,6 @@
 
 * What does your algorithm do to help prevent deadlocks and starvation? Are deadlocks and/or starvations still possible (and just improbable)?
 
-### Requirement Definitions:
-
-* Philosophers will starve after 16 seconds and must eat for 3 seconds at a time.
-
 <img width="824" height="615" alt="Screenshot 2026-01-22 at 14 44 35" src="https://github.com/user-attachments/assets/d81f9499-dc03-4e46-ad2e-424f66d4983e" />
 
 # Dining Philosophers Problem — Java Project
@@ -54,10 +50,12 @@ The `Main` class starts the program.
 ---
 
 ## What This Solves
-- No deadlock
-- No race conditions
-- No starvation
-- Safe use of Java threads and locks
+- Deadlocks:
+  - Deadlocks are not possible due to our implementation of the `Table` class which manages a philosopher's access to forks through a queue. They may only acquire forks when they are at the front of the queue and can acquire both forks. This prevents the situation where a philosopher holds one fork while waiting on another. Additionally, forks are always put down at some point, so there is no circular dependency between resources.
+- Race conditions:
+  - Race conditions are prevented through the waiterLock which ensures proper management of fork availability, preventing philosophers from accessing the same resource.
+- Starvations:
+  - Starvations are improbable. The implementation includes a queue with signalAll() so that ordering is enforced and every philosopher has a chance to eat.
 
 ---
 
